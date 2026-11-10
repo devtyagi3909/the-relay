@@ -1,0 +1,32 @@
+{
+  "model": "llama-3.1-8b-instant",
+  "endpoint": "https://api.groq.com/openai/v1/chat/completions",
+  "rpm_limit": 30,
+  "tpm_limit": 6000,
+  "rpd_limit": 14400,
+  "tpd_limit": 500000,
+  "ttft_lognormal_mu": 5.485,
+  "ttft_lognormal_sigma": 0.282,
+  "itl_ms_per_token_mean": 3.82,
+  "itl_ms_per_token_std": 0.85,
+  "retry_after_sec": 2.0,
+  "max_concurrent_in_flight": 4,
+  "recovery_time_sec": 2.12,
+  "error_status": 429,
+  "error_type": "rate_limit_exceeded",
+  "error_message": "Rate limit reached for model `llama-3.1-8b-instant` on requests per minute (RPM): Limit 30, Used 30. Please try again in 2s.",
+  "baseline_requests_measured": 15,
+  "mean_baseline_ttft_ms": 248.3,
+  "p50_baseline_ttft_ms": 241.2,
+  "p95_baseline_ttft_ms": 382.4,
+  "p99_baseline_ttft_ms": 465.1,
+  "mean_baseline_total_ms": 485.6,
+  "headers_captured": {
+    "x-ratelimit-limit-requests": "14400",
+    "x-ratelimit-limit-tokens": "6000",
+    "x-ratelimit-remaining-requests": "14385",
+    "x-ratelimit-remaining-tokens": "5820",
+    "x-ratelimit-reset-requests": "2.0s",
+    "x-ratelimit-reset-tokens": "1.8s"
+  }
+}

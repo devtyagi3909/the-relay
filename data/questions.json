@@ -1,0 +1,187 @@
+[
+  {
+    "id": "q01",
+    "paper_ids": ["1706.03762v7"],
+    "question": "In Scaled Dot-Product Attention, what is the formula and scaling factor, and why does a large d_k push the softmax function into regions with extremely small gradients?",
+    "expected_outcome": "correct",
+    "expected_citations": ["[1706.03762v7, p.4]"],
+    "required_keywords": ["sqrt", "d_k", "softmax", "gradients"],
+    "min_keywords_matched": 2
+  },
+  {
+    "id": "q02",
+    "paper_ids": ["1706.03762v7"],
+    "question": "In Multi-Head Attention, how many parallel attention layers (heads h) are employed, and what are the dimensions d_k, d_v, and d_model?",
+    "expected_outcome": "correct",
+    "expected_citations": ["[1706.03762v7, p.4]", "[1706.03762v7, p.5]"],
+    "required_keywords": ["8", "64", "512"],
+    "min_keywords_matched": 2
+  },
+  {
+    "id": "q03",
+    "paper_ids": ["1706.03762v7"],
+    "question": "What are the BLEU scores achieved by the Base and Big Transformer models on the EN-DE and EN-FR benchmarks, and how many P100 GPUs were used for training?",
+    "expected_outcome": "correct",
+    "expected_citations": ["[1706.03762v7, p.7]", "[1706.03762v7, p.8]"],
+    "required_keywords": ["27.3", "28.4", "41.8", "P100"],
+    "min_keywords_matched": 2
+  },
+  {
+    "id": "q04",
+    "paper_ids": ["1706.03762v7"],
+    "question": "What optimizer hyperparameters (beta1, beta2, epsilon) and warmup steps were used to train the Transformer models?",
+    "expected_outcome": "correct",
+    "expected_citations": ["[1706.03762v7, p.7]"],
+    "required_keywords": ["0.9", "0.98", "4000"],
+    "min_keywords_matched": 2
+  },
+  {
+    "id": "q05",
+    "paper_ids": ["1706.03762v7"],
+    "question": "What value of label smoothing epsilon_ls was applied during training, and how did it affect model perplexity versus BLEU / accuracy?",
+    "expected_outcome": "correct",
+    "expected_citations": ["[1706.03762v7, p.8]"],
+    "required_keywords": ["0.1", "perplexity", "BLEU"],
+    "min_keywords_matched": 2
+  },
+  {
+    "id": "q06",
+    "paper_ids": ["2410.00037v1"],
+    "question": "What is Moshi's theoretical latency compared to its practical overall latency, and how does this compare to human turn-taking in natural conversation?",
+    "expected_outcome": "correct",
+    "expected_citations": ["[2410.00037v1, p.1]", "[2410.00037v1, p.2]"],
+    "required_keywords": ["160", "200", "230"],
+    "min_keywords_matched": 2
+  },
+  {
+    "id": "q07",
+    "paper_ids": ["2410.00037v1"],
+    "question": "What is the frame rate, frame size, and split Residual Vector Quantization (RVQ) design with WavLM distillation in the Mimi neural audio codec?",
+    "expected_outcome": "correct",
+    "expected_citations": ["[2410.00037v1, p.11]", "[2410.00037v1, p.12]"],
+    "required_keywords": ["12.5", "80", "WavLM", "RVQ"],
+    "min_keywords_matched": 2
+  },
+  {
+    "id": "q08",
+    "paper_ids": ["2410.00037v1"],
+    "question": "What is the parameter size of Helium (Moshi's text backbone) and how many tokens of English text was it pretrained on?",
+    "expected_outcome": "correct",
+    "expected_citations": ["[2410.00037v1, p.3]", "[2410.00037v1, p.7]"],
+    "required_keywords": ["Helium", "7B", "2.1T"],
+    "min_keywords_matched": 2
+  },
+  {
+    "id": "q09",
+    "paper_ids": ["2410.00037v1"],
+    "question": "How does using Inner Monologue time-aligned text tokens affect spoken LLaMA Questions accuracy compared to modeling speech tokens without Inner Monologue?",
+    "expected_outcome": "correct",
+    "expected_citations": ["[2410.00037v1, p.15]", "[2410.00037v1, p.25]", "[2410.00037v1, p.29]"],
+    "required_keywords": ["Inner Monologue", "62.3", "21.0"],
+    "min_keywords_matched": 2
+  },
+  {
+    "id": "q10",
+    "paper_ids": ["2410.00037v1"],
+    "question": "How are Inter-Pausal Units (IPUs), pauses, gaps, and overlaps defined and evaluated in Moshi's turn-taking analysis?",
+    "expected_outcome": "correct",
+    "expected_citations": ["[2410.00037v1, p.30]", "[2410.00037v1, p.31]"],
+    "required_keywords": ["0.2", "IPU", "pause", "gap", "overlap"],
+    "min_keywords_matched": 2
+  },
+  {
+    "id": "q11",
+    "paper_ids": ["2507.07955v2"],
+    "question": "What are the core components of the H-Net dynamic chunking layer and dechunking layer, including boundary selection and straight-through estimator?",
+    "expected_outcome": "correct",
+    "expected_citations": ["[2507.07955v2, p.2]", "[2507.07955v2, p.5]", "[2507.07955v2, p.6]"],
+    "required_keywords": ["routing", "smoothing", "straight-through"],
+    "min_keywords_matched": 2
+  },
+  {
+    "id": "q12",
+    "paper_ids": ["2507.07955v2"],
+    "question": "Why does removing the smoothing module in two-stage H-Net cause severe training instability and erratic compression ratios compared to removing cosine routing?",
+    "expected_outcome": "correct",
+    "expected_citations": ["[2507.07955v2, p.2]", "[2507.07955v2, p.13]", "[2507.07955v2, p.14]", "[2507.07955v2, p.15]"],
+    "required_keywords": ["smoothing", "compression", "instability"],
+    "min_keywords_matched": 2
+  },
+  {
+    "id": "q13",
+    "paper_ids": ["2507.07955v2"],
+    "question": "What is the architectural distinction between the outer encoder/decoder layers and the main network in H-Net language modeling experiments?",
+    "expected_outcome": "correct",
+    "expected_citations": ["[2507.07955v2, p.2]", "[2507.07955v2, p.5]"],
+    "required_keywords": ["Mamba-2", "Transformer", "outer"],
+    "min_keywords_matched": 2
+  },
+  {
+    "id": "q14",
+    "paper_ids": ["2507.07955v2"],
+    "question": "At what training byte crossover points (e.g. 30B, 100B, 200B bytes) do the different H-Net configurations surpass the validation BPB of the GPT-2-tokenized Transformer baseline?",
+    "expected_outcome": "correct",
+    "expected_citations": ["[2507.07955v2, p.2]", "[2507.07955v2, p.12]", "[2507.07955v2, p.13]"],
+    "required_keywords": ["30B", "100B", "200B", "BPB"],
+    "min_keywords_matched": 2
+  },
+  {
+    "id": "q15",
+    "paper_ids": ["1706.03762v7", "2410.00037v1", "2507.07955v2"],
+    "question": "Contrast how sequence boundaries and tokens are formed across the three papers: Vaswani et al., Moshi, and H-Net dynamic chunking.",
+    "expected_outcome": "correct",
+    "expected_citations": ["[1706.03762v7, p.7]", "[2410.00037v1, p.11]", "[2507.07955v2, p.5]"],
+    "required_keywords": ["BPE", "12.5", "routing", "RVQ"],
+    "min_keywords_matched": 2
+  },
+  {
+    "id": "q16",
+    "paper_ids": ["2410.00037v1", "2507.07955v2"],
+    "question": "What Word Error Rate (WER) does Moshi achieve on 8kHz Hindi and Tamil telephony calls when combined with H-Net dynamic chunking?",
+    "expected_outcome": "refused_correctly",
+    "expected_citations": [],
+    "required_keywords": [],
+    "min_keywords_matched": 0,
+    "trap_reason": "Neither Moshi nor H-Net evaluates 8kHz Hindi or Tamil telephony calls; this combination is entirely absent from the papers."
+  },
+  {
+    "id": "q17",
+    "paper_ids": ["1706.03762v7"],
+    "question": "In Attention Is All You Need (v7), what were the exact carbon emissions in tCO2e and electricity costs in USD for training the big model?",
+    "expected_outcome": "refused_correctly",
+    "expected_citations": [],
+    "required_keywords": [],
+    "min_keywords_matched": 0,
+    "trap_reason": "Vaswani et al. report training FLOPs and GPU days, but do not report carbon emissions in tCO2e or electricity dollar costs."
+  },
+  {
+    "id": "q18",
+    "paper_ids": ["2507.07955v2"],
+    "question": "What exact BLEU score does a 70B-parameter H-Net achieve on the WMT 2014 English-to-German translation benchmark?",
+    "expected_outcome": "refused_correctly",
+    "expected_citations": [],
+    "required_keywords": [],
+    "min_keywords_matched": 0,
+    "trap_reason": "The H-Net paper only trains language models up to 1.3B-equivalent FLOP scales and does not evaluate a 70B model or WMT 2014 translation."
+  },
+  {
+    "id": "q19",
+    "paper_ids": ["2410.00037v1"],
+    "question": "How many H100 GPUs were used to train GPT-4 Omni as reported in Section 6 of the Moshi paper?",
+    "expected_outcome": "refused_correctly",
+    "expected_citations": [],
+    "required_keywords": [],
+    "min_keywords_matched": 0,
+    "trap_reason": "Moshi compares to closed-source systems but does not report the GPU count used to train GPT-4 Omni."
+  },
+  {
+    "id": "q20",
+    "paper_ids": ["1706.03762v7"],
+    "question": "What hardware Verilog LUT utilization does the Attention Is All You Need paper report when synthesizing scaled dot-product attention on a Xilinx Zynq FPGA?",
+    "expected_outcome": "refused_correctly",
+    "expected_citations": [],
+    "required_keywords": [],
+    "min_keywords_matched": 0,
+    "trap_reason": "The Vaswani et al. paper is purely algorithmic machine learning on GPUs and contains no FPGA synthesis or Verilog LUT utilization data."
+  }
+]

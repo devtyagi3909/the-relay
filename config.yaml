@@ -1,0 +1,77 @@
+# The Relay: Configuration Knobs for Systems Engineering Pipeline
+# All tunable parameters for live interview defense
+
+model:
+  name: "llama-3.1-8b-instant"
+  real_api_base: "https://api.groq.com/openai/v1"
+  standin_api_base: "http://127.0.0.1:8009/openai/v1"
+  pricing:
+    prompt_usd_per_million: 0.05
+    completion_usd_per_million: 0.08
+
+standin:
+  host: "127.0.0.1"
+  port: 8009
+  p_slow_success: 0.04
+  slow_stall_range_ms: [2200, 4200]
+  p_server_error: 0.015
+  server_error_status: 503
+  server_error_delay_ms: 400
+
+quotas:
+  default:
+    rpm: 30
+    tpm: 6000
+    rpd: 14400
+    tpd: 500000
+  halved:
+    rpm: 15
+    tpm: 3000
+    rpd: 14400
+    tpd: 500000
+
+admission_control:
+  user_patience_ms: 4500
+  queue_timeout_shed_ms: 3200
+  synthesis_budget_ms: 1300
+  max_queue_depth: 8
+  downshift_tpm_threshold: 4200
+  downshift_rpm_threshold: 6
+  max_retries: 1
+  retry_after_max_sec: 2.0
+  jitter_min_ms: 50
+  jitter_max_ms: 200
+
+pipeline:
+  default_setting: "balanced_512_k5_rerank"
+  downshifted_setting: "small_256_k3_norerank"
+  verifier_max_elapsed_ms: 2500
+  relevance_confidence_threshold: 0.15
+  max_self_corrections: 1
+
+retrieval_settings:
+  small_256_k3_norerank:
+    piece_size: 256
+    overlap: 32
+    pieces_fetched: 3
+    rerank: false
+  balanced_512_k5_rerank:
+    piece_size: 512
+    overlap: 64
+    pieces_fetched: 5
+    rerank: true
+    candidates_pool: 12
+  large_1024_k8_rerank:
+    piece_size: 1024
+    overlap: 128
+    pieces_fetched: 8
+    rerank: true
+    candidates_pool: 16
+
+paths:
+  papers_dir: "data/papers"
+  chunks_dir: "data/chunks"
+  questions_file: "data/questions.json"
+  calibration_file: "data/groq_calibration.json"
+  results_csv: "results.csv"
+  detailed_traces: "data/detailed_traces.jsonl"
