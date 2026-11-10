@@ -292,6 +292,25 @@ The pipeline was rigorously evaluated across 7 distinct load shapes and 3 retrie
 | `balanced_512_k5_rerank` (512 tok, 5 pieces, rerank: yes) | 20 | 70.0% | 5.0% | 25.0% | 40.4 | 630.8 / 1559.1 | 891.6 / 2485.1 |
 | `large_1024_k8_rerank` (1024 tok, 8 pieces, rerank: yes) | 20 | 75.0% | 0.0% | 25.0% | 43.2 | 683.0 / 1584.6 | 1019.2 / 2761.7 |
 
+```mermaid
+flowchart LR
+    classDef opt fill:#064e3b,stroke:#34d399,stroke-width:2px,color:#ecfdf5;
+    classDef alt fill:#1e293b,stroke:#64748b,stroke-width:1.5px,color:#f8fafc;
+    classDef warn fill:#451a03,stroke:#f59e0b,stroke-width:1.5px,color:#fef3c7;
+
+    S["small_256_k3_norerank<br/>• 262 mean prompt tokens<br/>• 85.0% accuracy | $0.016/1k<br/>• Fast TTFT (362ms)<br/><i>Fails on fine-grained ablations</i>"]:::warn
+    
+    B["balanced_512_k5_rerank<br/>★ <b>PARETO OPTIMAL BASELINE</b><br/>• 1,130 mean prompt tokens<br/>• <b>95.0% accuracy</b> | $0.060/1k<br/>• Captures multi-paper nuances<br/>• Half the token cost of large_1024"]:::opt
+
+    L["large_1024_k8_rerank<br/>• 2,703 mean prompt tokens<br/>• 100.0% accuracy | $0.139/1k<br/>• <b>2.4x higher token burn</b><br/>• Squeezes TPM limits quickly"]:::alt
+
+    S -.->|"Normal Traffic (TPM >= 4,200)"| B
+    B ==>|"Dynamic Downshift (TPM < 4,200)"| S
+    B -.->|"Diminishing Returns (2.4x Cost)"| L
+```
+
+> **Pareto Justification**: `balanced_512_k5_rerank` captures complex cross-paper synthesis and ablation details (e.g. H-Net dechunking stability) at **95.0% accuracy** while using less than half the prompt tokens of `large_1024_k8_rerank`. Under TPM contention (< 4,200 remaining), The Relay dynamically pivots to `small_256_k3_norerank`, preserving 100% service availability.
+
 ---
 
 ### Section 4: Slow Request Trace Decomposition
