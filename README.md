@@ -20,7 +20,15 @@ Under production inference quotas (such as Groq's multi-tier ceiling: **30 RPM, 
 
 Below is a live macOS animated terminal simulation capturing real-time SSE token streaming, Time-To-First-Token (TTFT) latency, bounded HTTP 429 jittered backoff, dynamic retrieval downshifting, and the 3:00 PM zero-token citation card:
 
-![The Relay Terminal Simulation](assets/terminal_simulation.svg)
+<p align="center">
+  <img src="assets/terminal_demo.svg" alt="The Relay Terminal Simulation" width="100%">
+</p>
+
+<p align="center">
+  <a href="writeup/writeup.pdf"><img src="https://img.shields.io/badge/WRITE--UP%20(PDF)-2%20PAGES%20EXACT-8a2be2?style=for-the-badge&logo=adobeacrobatreader&logoColor=white" alt="Write-up PDF"></a>
+  <a href="results.csv"><img src="https://img.shields.io/badge/RESULTS%20(CSV)-450%20BENCHMARK%20RUNS-brightgreen?style=for-the-badge&logo=databricks&logoColor=white" alt="Results CSV"></a>
+  <a href="https://devtyagi-ai.netlify.app"><img src="https://img.shields.io/badge/PORTFOLIO-DEV%20TYAGI-0969da?style=for-the-badge&logo=safari&logoColor=white" alt="Portfolio"></a>
+</p>
 
 > [!TIP]
 > **Interactive Preview**: For an interactive version with manual playback controls, step-by-step frame inspection, and live metric counters, open [`assets/terminal_preview.html`](file:///Users/devtyagi/Downloads/the-relay/assets/terminal_preview.html) in your browser.

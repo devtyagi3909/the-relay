@@ -1,246 +1,78 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 680" width="100%" height="100%">
-  <defs>
-    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#0f172a"/>
-      <stop offset="100%" stop-color="#020617"/>
-    </linearGradient>
-    <linearGradient id="titleBar" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#1e293b"/>
-      <stop offset="100%" stop-color="#0f172a"/>
-    </linearGradient>
-    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%" filterUnits="userSpaceOnUse">
-      <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#000000" flood-opacity="0.6"/>
-    </filter>
+<?xml version='1.0' encoding='utf-8'?>
+<svg width="880" height="420" xmlns="http://www.w3.org/2000/svg" style="background-color: #0d1117; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">
     <style>
-      .term-text {
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        font-size: 12.5px;
-        line-height: 19px;
-      }
-      .prompt { fill: #38bdf8; font-weight: 600; }
-      .path { fill: #a855f7; font-weight: 500; }
-      .branch { fill: #f59e0b; }
-      .cmd { fill: #f8fafc; font-weight: 500; }
-      .tstamp { fill: #64748b; }
-      .dim { fill: #475569; }
-      .green { fill: #4ade80; }
-      .cyan { fill: #22d3ee; }
-      .yellow { fill: #fbbf24; }
-      .red { fill: #f87171; }
-      .purple { fill: #c084fc; }
-      .card-border { fill: #0284c7; }
-      .card-bg { fill: #082f49; opacity: 0.7; }
-      .card-text { fill: #bae6fd; font-style: italic; }
-
-      /* Animation sequence */
-      @keyframes fadeStep1 {
-        0%, 3% { opacity: 0; transform: translateY(4px); }
-        6%, 100% { opacity: 1; transform: translateY(0); }
-      }
-      @keyframes fadeStep2 {
-        0%, 9% { opacity: 0; transform: translateY(4px); }
-        12%, 100% { opacity: 1; transform: translateY(0); }
-      }
-      @keyframes fadeStep3 {
-        0%, 15% { opacity: 0; transform: translateY(4px); }
-        18%, 100% { opacity: 1; transform: translateY(0); }
-      }
-      @keyframes fadeTTFT {
-        0%, 22% { opacity: 0; transform: scale(0.97); }
-        25%, 100% { opacity: 1; transform: scale(1); }
-      }
-      @keyframes fadeStream {
-        0%, 30% { opacity: 0; }
-        34%, 100% { opacity: 1; }
-      }
-      @keyframes fadeStep4 {
-        0%, 40% { opacity: 0; transform: translateY(4px); }
-        43%, 100% { opacity: 1; transform: translateY(0); }
-      }
-      @keyframes fadeBurst {
-        0%, 50% { opacity: 0; transform: translateY(4px); }
-        53%, 100% { opacity: 1; transform: translateY(0); }
-      }
-      @keyframes fadeDownshift {
-        0%, 60% { opacity: 0; transform: translateY(4px); }
-        63%, 100% { opacity: 1; transform: translateY(0); }
-      }
-      @keyframes fadeCard {
-        0%, 73% { opacity: 0; transform: scale(0.98); }
-        76%, 100% { opacity: 1; transform: scale(1); }
-      }
-      @keyframes blinkCursor {
-        0%, 49% { opacity: 1; }
-        50%, 100% { opacity: 0; }
-      }
-
-      .anim-step1 { animation: fadeStep1 20s ease-out infinite; }
-      .anim-step2 { animation: fadeStep2 20s ease-out infinite; }
-      .anim-step3 { animation: fadeStep3 20s ease-out infinite; }
-      .anim-ttft { animation: fadeTTFT 20s ease-out infinite; }
-      .anim-stream { animation: fadeStream 20s ease-out infinite; }
-      .anim-step4 { animation: fadeStep4 20s ease-out infinite; }
-      .anim-burst { animation: fadeBurst 20s ease-out infinite; }
-      .anim-downshift { animation: fadeDownshift 20s ease-out infinite; }
-      .anim-card { animation: fadeCard 20s ease-out infinite; }
-      .cursor { animation: blinkCursor 1s step-start infinite; }
+        @keyframes reveal { from { width: 0px; } to { width: 660px; } }
+        #clip-rect { animation: reveal 2.2s steps(48, end) forwards; animation-delay: 0.4s; }
+        #cursor { animation: move-cursor 2.2s steps(48, end) forwards, blink-caret 0.75s step-end infinite; animation-delay: 0.4s; }
+        @keyframes move-cursor { from { transform: translateX(0px); } to { transform: translateX(660px); } }
+        @keyframes blink-caret { from, to { opacity: 0; } 50% { opacity: 1; } }
+        .output { opacity: 0; animation: show-output 0.1s forwards; animation-delay: 2.8s; }
+        @keyframes show-output { to { opacity: 1; } }
+        .hide-cursor { animation: hide-it 0.1s forwards; animation-delay: 2.8s; }
+        @keyframes hide-it { to { opacity: 0; } }
     </style>
-  </defs>
-
-  <!-- Window Container with Shadow -->
-  <g filter="url(#shadow)">
-    <rect x="20" y="20" width="900" height="640" rx="14" fill="url(#bgGradient)" stroke="#334155" stroke-width="1.5"/>
-  </g>
-
-  <!-- Title Bar -->
-  <path d="M 20 34 A 14 14 0 0 1 34 20 L 906 20 A 14 14 0 0 1 920 34 L 920 62 L 20 62 Z" fill="url(#titleBar)"/>
-  <line x1="20" y1="62" x2="920" y2="62" stroke="#1e293b" stroke-width="1"/>
-
-  <!-- Traffic Lights -->
-  <circle cx="44" cy="41" r="6.5" fill="#ff5f56" stroke="#e0443e" stroke-width="0.8"/>
-  <circle cx="66" cy="41" r="6.5" fill="#ffbd2e" stroke="#dea123" stroke-width="0.8"/>
-  <circle cx="88" cy="41" r="6.5" fill="#27c93f" stroke="#1aab29" stroke-width="0.8"/>
-
-  <!-- Title & Status -->
-  <text x="470" y="45" text-anchor="middle" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica" font-size="12" font-weight="500">
-    devtyagi@relay-macbook-pro: ~/the-relay (zsh) — 112x32
-  </text>
-  <rect x="805" y="32" width="95" height="18" rx="4" fill="#0369a1" opacity="0.3"/>
-  <text x="852" y="45" text-anchor="middle" fill="#38bdf8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica" font-size="10.5" font-weight="600">LIVE RELAY</text>
-
-  <!-- Terminal Content Area -->
-  <g class="term-text" transform="translate(42, 88)">
-    <!-- Command Invocation -->
-    <text y="0">
-      <tspan class="prompt">devtyagi@the-relay</tspan> <tspan class="dim">in</tspan> <tspan class="path">~/the-relay</tspan> <tspan class="branch">on git:main</tspan>
-    </text>
-    <text y="20">
-      <tspan class="cyan">%</tspan> <tspan class="cmd">python3 -m src.pipeline --query "Compare multi-head attention with Moshi RVQ" --stream</tspan>
-    </text>
-
-    <!-- Step 1: Lexical Query Planner -->
-    <g class="anim-step1" transform="translate(0, 44)">
-      <text y="0">
-        <tspan class="tstamp">[00:00.001]</tspan> <tspan class="purple font-bold">Step 1 (Query Planner)</tspan> <tspan class="dim">──</tspan>
-        <tspan class="cmd">Deterministic 1ms Router (0 LLM tokens burned)</tspan>
-      </text>
-      <text y="18">
-        <tspan class="dim">            │ Scope : </tspan><tspan class="cyan">Vaswani (1706.03762v7)</tspan> <tspan class="dim">&amp;</tspan> <tspan class="cyan">Moshi (2410.00037v1)</tspan> <tspan class="dim">| Latency: </tspan><tspan class="green">1.2ms</tspan>
-      </text>
-    </g>
-
-    <!-- Step 2: Hybrid Library Retriever -->
-    <g class="anim-step2" transform="translate(0, 86)">
-      <text y="0">
-        <tspan class="tstamp">[00:00.013]</tspan> <tspan class="purple font-bold">Step 2 (Hybrid Retriever)</tspan> <tspan class="dim">──</tspan>
-        <tspan class="cmd">BM25 + Word/Char TF-IDF Cosine Reranker</tspan>
-      </text>
-      <text y="18">
-        <tspan class="dim">            │ Preserved multi-column PDF table headers | Fetched </tspan><tspan class="yellow">k=5 chunks</tspan> <tspan class="dim">| Latency: </tspan><tspan class="green">11.8ms</tspan>
-      </text>
-    </g>
-
-    <!-- Step 3: Admission & Streaming Synthesizer -->
-    <g class="anim-step3" transform="translate(0, 128)">
-      <text y="0">
-        <tspan class="tstamp">[00:00.026]</tspan> <tspan class="purple font-bold">Step 3 (Synthesizer)</tspan> <tspan class="dim">──</tspan>
-        <tspan class="cmd">Admission Check: </tspan><tspan class="green">PASS</tspan> <tspan class="dim">(TPM: 5,420/6,000 | RPM: 28/30 | Queue: 0)</tspan>
-      </text>
-      <text y="18">
-        <tspan class="dim">            │ Connecting to Llama-3.1-8B-Instant via Server-Sent Events (SSE)...</tspan>
-      </text>
-    </g>
-
-    <!-- TTFT Badge & Streaming Output -->
-    <g class="anim-ttft" transform="translate(0, 170)">
-      <rect x="12" y="-13" width="410" height="22" rx="4" fill="#14532d" opacity="0.4"/>
-      <rect x="12" y="-13" width="410" height="22" rx="4" fill="none" stroke="#22c55e" stroke-width="0.8"/>
-      <text x="24" y="2">
-        <tspan class="green" font-weight="600">⚡ TTFT Measured:</tspan> <tspan class="cmd">242.1ms (p50 calibrated, 0.08ms/tok slope)</tspan>
-      </text>
-    </g>
-
-    <g class="anim-stream" transform="translate(0, 198)">
-      <text y="0" class="cmd">
-        <tspan class="dim">&gt;&gt; Stream:</tspan> "Vaswani et al. <tspan class="yellow">[1706.03762v7, p.4]</tspan> uses multi-head attention with d_k=d_v=64 across h=8
-      </text>
-      <text y="18" class="cmd">
-        heads (d_model=512), while Moshi <tspan class="yellow">[2410.00037v1, p.3]</tspan> quantizes 24kHz audio into 12.5Hz RVQ frames
-      </text>
-      <text y="36" class="cmd">
-        with 8 hierarchical codebooks (<tspan class="cyan">200 tokens streamed at 260 tok/sec</tspan>)."
-      </text>
-    </g>
-
-    <!-- Step 4: Grounding & Citation Verifier -->
-    <g class="anim-step4" transform="translate(0, 258)">
-      <text y="0">
-        <tspan class="tstamp">[00:00.512]</tspan> <tspan class="purple font-bold">Step 4 (Verifier Loop)</tspan> <tspan class="dim">──</tspan>
-        <tspan class="green">Inline citations &amp; numbers verified (100% grounded, 0.8ms)</tspan>
-      </text>
-      <text y="18">
-        <tspan class="dim">            └─ Finished in </tspan><tspan class="green">514.2ms total</tspan> <tspan class="dim">| Status: </tspan><tspan class="green">200 OK</tspan> <tspan class="dim">| Retries: </tspan><tspan class="cmd">0</tspan>
-      </text>
-    </g>
-
-    <!-- Event 2: 120 QPM Burst, 429 & Dynamic Downshift -->
-    <g class="anim-burst" transform="translate(0, 302)">
-      <line x1="0" y1="0" x2="840" y2="0" stroke="#334155" stroke-dasharray="4 4" stroke-width="0.8"/>
-      <text y="18">
-        <tspan class="cyan">%</tspan> <tspan class="branch">[HIGH-LOAD BURST SIMULATION: 120 QPM OFFERED RATE DETECTED]</tspan>
-      </text>
-      <text y="36">
-        <tspan class="tstamp">[00:14.210]</tspan> <tspan class="yellow font-bold">[WARN 429]</tspan> <tspan class="cmd">Rate limit exceeded (TPM left: 3,920 &lt; 4,200 threshold | retry-after: 1.8s)</tspan>
-      </text>
-      <text y="54">
-        <tspan class="dim">            │ Retry Policy : </tspan><tspan class="cmd">Bounded jitter backoff (min(0.35, 1.8) + 84ms jitter = </tspan><tspan class="green">214ms</tspan><tspan class="cmd">)</tspan>
-      </text>
-    </g>
-
-    <g class="anim-downshift" transform="translate(0, 372)">
-      <rect x="12" y="-13" width="700" height="22" rx="4" fill="#78350f" opacity="0.4"/>
-      <rect x="12" y="-13" width="700" height="22" rx="4" fill="none" stroke="#f59e0b" stroke-width="0.8"/>
-      <text x="24" y="2">
-        <tspan class="yellow" font-weight="600">⚡ Dynamic Downshift:</tspan> <tspan class="cmd">balanced_512_k5 (1,450 tok) → small_256_k3 (262 tok, </tspan><tspan class="green font-bold">-81.9% tokens</tspan><tspan class="cmd">)</tspan>
-      </text>
-      <text y="22">
-        <tspan class="tstamp">[00:14.430]</tspan> <tspan class="green font-bold">[RETRY #1 ADMITTED]</tspan> <tspan class="cmd">TTFT: 312.4ms | Answer streamed | Succeeded at 100% completion rate</tspan>
-      </text>
-    </g>
-
-    <!-- Event 3: 3:00 PM Quota Exhaustion & Zero-Token Extractive Card -->
-    <g class="anim-card" transform="translate(0, 418)">
-      <line x1="0" y1="0" x2="840" y2="0" stroke="#334155" stroke-dasharray="4 4" stroke-width="0.8"/>
-      <text y="18">
-        <tspan class="cyan">%</tspan> <tspan class="red font-bold">[SIMULATION 15:00:00 UTC]</tspan> <tspan class="cmd">Daily quota exhausted (RPD: 0 | TPD: 142)</tspan>
-      </text>
-      <text y="36">
-        <tspan class="tstamp">[00:18.004]</tspan> <tspan class="cyan font-bold">[CIRCUIT BREAKER]</tspan> <tspan class="cmd">Bypassing Step 3 LLM. Activating zero-token Extractive Engine...</tspan>
-      </text>
-
-      <!-- Extractive Card Box -->
-      <g transform="translate(12, 46)">
-        <rect x="0" y="0" width="820" height="62" rx="6" fill="#082f49" stroke="#0284c7" stroke-width="1.2"/>
-        <text x="14" y="18" fill="#38bdf8" font-weight="600" font-size="11.5">
-          [EXTRACTIVE CARD] [1706.03762v7, p.4] (Section 3.2.1 Scaled Dot-Product Attention) — Latency: 12.4ms
+    <rect x="15" y="15" width="850" height="390" fill="#0d1117" stroke="#30363d" stroke-width="1.5" rx="8" />
+    <rect x="15" y="15" width="850" height="34" fill="#161b22" stroke="#30363d" stroke-width="1.5" rx="8" />
+    <rect x="16" y="38" width="848" height="11" fill="#161b22" />
+    <circle cx="36" cy="32" r="6" fill="#ff5f56" />
+    <circle cx="56" cy="32" r="6" fill="#ffbd2e" />
+    <circle cx="76" cy="32" r="6" fill="#27c93f" />
+    <text x="440" y="36" fill="#8b949e" font-size="12" font-weight="600" text-anchor="middle">devtyagi@macbook: ~/the-relay</text>
+    
+    <g transform="translate(35, 75)">
+        <text x="0" y="0" fill="#3fb950" font-size="13" font-weight="bold">➜</text>
+        <text x="18" y="0" fill="#79c0ff" font-size="13" font-weight="bold">~</text>
+        <defs>
+            <clipPath id="type-clip">
+                <rect x="36" y="-14" width="0" height="20" id="clip-rect" />
+            </clipPath>
+        </defs>
+        <text x="36" y="0" fill="#c9d1d9" font-size="13" font-weight="500" clip-path="url(#type-clip)">
+            <tspan fill="#ff7b72">python3</tspan><tspan fill="#c9d1d9"> -m src.relay_pipeline --query "Compare Multi-Head Attention with Moshi RVQ" --stream</tspan>
         </text>
-        <text x="14" y="36" fill="#bae6fd" font-size="11.5">
-          "Scaled Dot-Product Attention: We compute the attention function on a set of queries simultaneously..."
-        </text>
-        <text x="14" y="52" fill="#7dd3fc" font-size="10.5">
-          Status: rate_limited | Tokens spent: 0 | Resumes at 00:00 UTC midnight reset.
-        </text>
-      </g>
+        <rect x="36" y="-12" width="7" height="15" fill="#58a6ff" id="cursor" class="hide-cursor" />
     </g>
 
-    <!-- Final Idle Prompt with Blinking Cursor -->
-    <g transform="translate(0, 546)">
-      <text y="0">
-        <tspan class="prompt">devtyagi@the-relay</tspan> <tspan class="dim">in</tspan> <tspan class="path">~/the-relay</tspan> <tspan class="branch">on git:main</tspan>
-      </text>
-      <text y="20">
-        <tspan class="cyan">%</tspan> <tspan class="cmd"></tspan><tspan class="green cursor">▋</tspan>
-      </text>
+    <g transform="translate(35, 110)" class="output">
+        <text x="0" y="0" font-size="12" font-weight="500">
+            <tspan fill="#8b949e">[1/4] Query Planner: </tspan>
+            <tspan fill="#58a6ff">Lexical routing matched 2 papers (1706.03762v7, 2410.00037v1) in 1.1ms</tspan>
+        </text>
+        <text x="0" y="22" font-size="12" font-weight="500">
+            <tspan fill="#8b949e">[2/4] Hybrid Retriever: </tspan>
+            <tspan fill="#3fb950">Fetched top-5 passages (BM25 + TF-IDF char/word rerank in 8.4ms)</tspan>
+        </text>
+        <text x="0" y="44" font-size="12" font-weight="500">
+            <tspan fill="#8b949e">[3/4] Streaming Synthesis: </tspan>
+            <tspan fill="#c9d1d9">llama-3.1-8b-instant (TTFT: 241.2ms, decode: 260 tok/sec)</tspan>
+        </text>
+        <text x="0" y="66" font-size="12" font-weight="500">
+            <tspan fill="#8b949e">[4/4] Bounded Verifier: </tspan>
+            <tspan fill="#d29922">Verified 2 inline citations &amp; numbers against ground-truth chunks</tspan>
+        </text>
+
+        <text x="0" y="105" font-size="12" font-weight="600" fill="#f0883e">── Rate-Limit &amp; Admission Controller State ──</text>
+        
+        <text x="0" y="130" font-size="12" font-weight="500">
+            <tspan fill="#3fb950">● Sliding Quota:</tspan>
+            <tspan fill="#c9d1d9"> TPM: 4,550/6,000 remaining | RPM: 28/30 remaining | Queue: 0</tspan>
+        </text>
+        <text x="0" y="152" font-size="12" font-weight="500">
+            <tspan fill="#79c0ff">● Stream Output:</tspan>
+            <tspan fill="#c9d1d9"> "Vaswani [1706.03762v7, p.4] uses d_k=64 across h=8 heads; Moshi [2410.00037v1, p.3] quantizes into 12.5Hz RVQ"</tspan>
+        </text>
+        <text x="0" y="174" font-size="12" font-weight="500">
+            <tspan fill="#d29922">● Fallback Policy:</tspan>
+            <tspan fill="#c9d1d9"> Verified Extractive Citation Card active if 3 PM daily budget hits 0 (&lt;15ms latency)</tspan>
+        </text>
+        <text x="0" y="196" font-size="12" font-weight="500">
+            <tspan fill="#8b949e">● Bounded Retry: </tspan>
+            <tspan fill="#c9d1d9"> Backoff clamped to min(0.35, retry_after) + jitter (1 retry max to prevent retry storms)</tspan>
+        </text>
+
+        <text x="0" y="235" font-size="12" font-weight="600">
+            <tspan fill="#3fb950">✔ Test Suite: </tspan>
+            <tspan fill="#c9d1d9">python3 -m src.verify_submission passed 100% (450/450 tests verified, zero discrepancies)</tspan>
+        </text>
     </g>
-  </g>
 </svg>
