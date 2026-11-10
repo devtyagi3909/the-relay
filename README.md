@@ -93,7 +93,7 @@ flowchart TD
 | **Step 1: Query Planner** | Deterministic lexical and entity router matching paper scopes and filtering traps. | `1.2 ms` | **0 tokens** | Preserves provider RPM ceiling by eliminating multi-step LLM routing calls. |
 | **Step 2: Hybrid Retriever** | In-memory BM25 candidate scoring + character/word n-gram TF-IDF reranker with table header stitching. | `11.8 ms` | **0 tokens** | Pre-synthesis abstention guardrail catches unanswerable questions (100% precision). |
 | **Step 3: Synthesizer** | Server-Sent Events (SSE) streaming with calibrated LogNormal TTFT instrumentation. | `240–600 ms` | Adaptive | Header-driven sliding window tracking (`x-ratelimit-*`) and bounded jitter backoff. |
-| **Step 4: Verifier Loop** | Deterministic inline citation `[<paper_id>, p.<page>]` and numeric grounding checker. | `0.8 ms` | **0 tokens** | Bounded self-correction loop triggered only if latency budget $<2,500\text{ ms}$ and TPM $>2,500$. |
+| **Step 4: Verifier Loop** | Deterministic inline citation `[<paper_id>, p.<page>]` and numeric grounding checker. | `0.8 ms` | **0 tokens** | Bounded self-correction loop triggered only if latency budget < 2,500 ms and TPM > 2,500. |
 
 ---
 
@@ -133,10 +133,12 @@ flowchart TD
 ```
 
 ### Defensive Admission Safeguards
-1. **Proactive Queue Shedding**: If a request waits in the local arrival queue longer than $3,200\text{ ms}$, less than $1,300\text{ ms}$ remains before the user patience deadline ($4,500\text{ ms}$). The controller immediately sheds the request with `status="timeout"`, saving upstream tokens for younger requests.
-2. **Bounded Jittered Backoff**: On HTTP 429 or 503, retries are bounded to a maximum of 1, permitted **only** when $\text{retry\_after} \le 2.0\text{s}$, queue depth $\le 8$, and cumulative elapsed time $<3,500\text{ ms}$. Full jitter is calculated as:
-   $$\text{sleep} = \min(0.35, \text{retry\_after}) + \text{Uniform}(0.05, 0.15)\text{ seconds}$$
-3. **Daily Quota Exhaustion Circuit Breaker**: When RPD hits 0 or TPD drops below 200 (such as at 3:00 PM), upstream generation is halted. The pipeline synthesizes a verified **Extractive Citation Card** directly from Step 2 chunks in $<15\text{ ms}$, returning `status="rate_limited"` with zero token spend.
+1. **Proactive Queue Shedding**: If a request waits in the local arrival queue longer than 3,200 ms, less than 1,300 ms remains before the user patience deadline (4,500 ms). The controller immediately sheds the request with `status="timeout"`, saving upstream tokens for younger requests.
+2. **Bounded Jittered Backoff**: On HTTP 429 or 503, retries are bounded to a maximum of 1, permitted **only** when `retry-after <= 2.0s`, queue depth <= 8, and cumulative elapsed time < 3,500 ms. Full jitter is calculated as:
+   ```text
+   sleep = min(0.35, retry_after) + Uniform(0.05, 0.15) seconds
+   ```
+3. **Daily Quota Exhaustion Circuit Breaker**: When RPD hits 0 or TPD drops below 200 (such as at 3:00 PM), upstream generation is halted. The pipeline synthesizes a verified **Extractive Citation Card** directly from Step 2 chunks in < 15 ms, returning `status="rate_limited"` with zero token spend.
 
 ---
 
@@ -181,8 +183,8 @@ flowchart LR
 ```
 
 ### Downshift Performance Comparison
-- **Token Reduction**: Prompt size drops from $\sim 1,450$ tokens to $\sim 262$ tokens (**81.9% reduction**).
-- **Latency Acceleration**: Pre-fill latency drops proportionally with the $0.08\text{ ms/tok}$ prefill slope, reducing TTFT by $\sim 95\text{ ms}$.
+- **Token Reduction**: Prompt size drops from ~1,450 tokens to ~262 tokens (**81.9% reduction**).
+- **Latency Acceleration**: Pre-fill latency drops proportionally with the 0.08 ms/token prefill slope, reducing TTFT by ~95 ms.
 - **Throughput Multiplier**: Boosts sustainable offered load capacity from **4.1 QPM to 20.0 QPM** under the identical 6,000 TPM limit.
 
 ---
@@ -218,7 +220,9 @@ flowchart TD
 ```
 
 ### The Math Behind the Cliff
-$$\text{Max Throughput}_{\text{Standard}} = \frac{6,000\text{ tokens/min}}{1,450\text{ tokens/request}} \approx 4.137\text{ queries per minute}$$
+```text
+Max Sustainable Throughput = 6,000 TPM / 1,450 tokens/request ≈ 4.14 queries per minute
+```
 
 Despite an advertised 30 RPM limit, any offered rate exceeding **4.14 QPM** triggers an immediate HTTP 429 on the 5th request within any 60-second sliding window. The remaining **86.2% of the RPM quota is rendered completely inaccessible**. Dynamic downshifting resolves this by shedding $>75\%$ of prompt tokens per request as soon as remaining TPM crosses below 4,200.
 
@@ -271,7 +275,11 @@ The pipeline was rigorously evaluated across 7 distinct load shapes and 3 retrie
 | `daily_budget_exhausted` | 16.7% | 83.3% | 0.0% | 0.0 | 4 | 46.8 | $0.0053 |
 | `naive_retry_storm` | 55.0% | 45.0% | 0.0% | 1.4 | 22 | 22.7 | $0.0136 |
 
-> **Cost Formula**: $\text{Cost per 1,000 answers} = 1,000 \times \left[\left(\frac{\text{mean\_tokens\_in} \times \$0.05}{10^6}\right) + \left(\frac{\text{mean\_tokens\_out} \times \$0.08}{10^6}\right)\right]$ using official Groq Llama-3.1-8B-Instant pricing.
+> **Cost Formula**:
+> ```text
+> Cost per 1,000 answers = 1,000 × [(mean_tokens_in × $0.05 / 10⁶) + (mean_tokens_out × $0.08 / 10⁶)]
+> ```
+> *Calculated using official Groq Llama-3.1-8B-Instant token pricing.*
 
 ---
 
@@ -299,10 +307,10 @@ Request Trace: burst_0023 (Scenario: burst)
 └── Total Pipeline Time : 2306.3 ms  (Status: OK)
 ```
 
-$$\text{Delay Before First Token} = 1,946.0\text{ ms } (84.4\% \text{ of total latency})$$
-$$\text{Delay After First Token} = 360.3\text{ ms } (15.6\% \text{ of total latency})$$
+- **Delay Before First Token**: 1,946.0 ms (84.4% of total latency)
+- **Delay After First Token**: 360.3 ms (15.6% of total latency)
 
-> **Key Takeaway**: Under production load, **$84.4\%$ to $98\%+$ of user-perceived delay occurs before token 1 arrives**. Optimizing LLM decode speed provides negligible gains compared to queue admission management and prefill downshifting.
+> **Key Takeaway**: Under production load, **84.4% to 98%+ of user-perceived delay occurs before token 1 arrives**. Optimizing LLM decode speed provides negligible gains compared to queue admission management and prefill downshifting.
 
 ---
 
@@ -321,7 +329,7 @@ Comparing `burst` (The Relay's bounded retry policy) against `naive_retry_storm`
 ```
 
 - In `naive_retry_storm`, retrying on HTTP 429 without token admission control amplified provider contention, driving **60 duplicate retries**, inflating queue depth to 22 requests, and wasting the remaining TPM budget.
-- By capping retries to 1, requiring $\text{retry\_after} \le 2.0\text{s}$, and enforcing queue length $\le 8$, The Relay prevented cascading queue stalls and sustained throughput.
+- By capping retries to 1, requiring `retry-after <= 2.0s`, and enforcing queue length <= 8, The Relay prevented cascading queue stalls and sustained throughput.
 
 ---
 
