@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Relay — Terminal Simulation & Telemetry Visualizer</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #0f172a;
+      --border: #334155;
+      --cyan: #38bdf8;
+      --green: #4ade80;
+      --yellow: #fbbf24;
+      --red: #f87171;
+      --purple: #c084fc;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 50% 20%, #1e293b 0%, #090d16 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+    }
+    header {
+      text-align: center;
+      max-width: 800px;
+      margin-bottom: 24px;
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    p.subtitle {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .terminal-container {
+      width: 100%;
+      max-width: 940px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #0d1117;
+    }
+    .window-header {
+      background: #161b22;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #21262d;
+    }
+    .traffic-lights {
+      display: flex;
+      gap: 8px;
+    }
+    .light {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .light.red { background: #ff5f56; border: 1px solid #e0443e; }
+    .light.yellow { background: #ffbd2e; border: 1px solid #dea123; }
+    .light.green { background: #27c93f; border: 1px solid #1aab29; }
+    .title-text {
+      font-size: 13px;
+      color: #8b949e;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-weight: 500;
+    }
+    .controls {
+      display: flex;
+      gap: 8px;
+    }
+    .btn {
+      background: #21262d;
+      color: #c9d1d9;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn:hover {
+      background: #30363d;
+      color: #fff;
+    }
+    .terminal-body {
+      padding: 24px 28px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      min-height: 480px;
+    }
+    .line {
+      margin-bottom: 4px;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .line.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .prompt { color: #38bdf8; font-weight: 600; }
+    .path { color: #a855f7; }
+    .branch { color: #f59e0b; }
+    .tstamp { color: #64748b; margin-right: 8px; }
+    .step { color: #c084fc; font-weight: 700; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 12px;
+      margin: 6px 0;
+    }
+    .badge.ttft {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid #22c55e;
+      color: #4ade80;
+    }
+    .badge.downshift {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid #f59e0b;
+      color: #fbbf24;
+    }
+    .citation-card {
+      margin: 10px 0;
+      padding: 12px 16px;
+      background: rgba(2, 132, 199, 0.1);
+      border: 1px solid #0284c7;
+      border-radius: 6px;
+      color: #bae6fd;
+    }
+    .citation-title {
+      color: #38bdf8;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 16px;
+      background: #4ade80;
+      vertical-align: text-bottom;
+      animation: blink 1s step-start infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+    .metrics-bar {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      width: 100%;
+      max-width: 940px;
+    }
+    .metric-card {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid #334155;
+      padding: 12px 16px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .metric-val {
+      font-size: 20px;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+    .metric-lbl {
+      font-size: 11px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>The Relay: High-Throughput RAG Architecture Simulation</h1>
+    <p class="subtitle">Real-time simulation of Step 1–4 asymmetric pipeline, TTFT measurement, dynamic retrieval downshifting under 429 limits, and zero-token citation fallback.</p>
+  </header>
+
+  <div class="terminal-container">
+    <div class="window-header">
+      <div class="traffic-lights">
+        <div class="light red"></div>
+        <div class="light yellow"></div>
+        <div class="light green"></div>
+      </div>
+      <div class="title-text">devtyagi@relay-macbook-pro: ~/the-relay (zsh)</div>
+      <div class="controls">
+        <button class="btn" id="btnRestart">↺ Replay</button>
+        <button class="btn" id="btnSpeed">Speed: 1x</button>
+      </div>
+    </div>
+    <div class="terminal-body" id="termBody">
+      <!-- Lines injected by JS -->
+    </div>
+  </div>
+
+  <div class="metrics-bar">
+    <div class="metric-card">
+      <div class="metric-val" id="metricTPM">6,000</div>
+      <div class="metric-lbl">Remaining TPM</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val" id="metricRPM">30</div>
+      <div class="metric-lbl">Remaining RPM</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val" id="metricTTFT">241.2 ms</div>
+      <div class="metric-lbl">Calibrated TTFT (p50)</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val" id="metricStatus">IDLE</div>
+      <div class="metric-lbl">Admission State</div>
+    </div>
+  </div>
+
+  <script>
+    const events = [
+      { text: '<span class="prompt">devtyagi@the-relay</span> in <span class="path">~/the-relay</span> on <span class="branch">git:main</span>', delay: 300 },
+      { text: '<span style="color:#22d3ee">%</span> <strong>python3 -m src.pipeline --query "Compare multi-head attention with Moshi RVQ" --stream</strong>', delay: 700 },
+      { text: '<span class="tstamp">[00:00.001]</span> <span class="step">Step 1 (Query Planner)</span>: 0 LLM tokens burned | Lexical router extracted targets [1706.03762v7, 2410.00037v1] (1.2ms)', delay: 1000, tpm: 6000, rpm: 30, status: "ROUTING" },
+      { text: '<span class="tstamp">[00:00.013]</span> <span class="step">Step 2 (Retriever)</span>: BM25 + Word/Char TF-IDF Cosine Rerank | Table headers preserved | 5 chunks fetched (11.8ms)', delay: 1300, status: "RETRIEVING" },
+      { text: '<span class="tstamp">[00:00.026]</span> <span class="step">Step 3 (Synthesizer)</span>: Admission Granted (Remaining TPM: 5,420 | RPM: 28) | Streaming via Llama-3.1-8B-Instant...', delay: 1600, tpm: 5420, rpm: 28, status: "ADMITTED" },
+      { text: '<div class="badge ttft">⚡ Time-To-First-Token (TTFT): 242.1ms (p50 calibrated LogNormal, 0.08ms/tok slope)</div>', delay: 2000, ttft: "242.1 ms" },
+      { text: '<span style="color:#64748b">&gt;&gt; Real-time Stream:</span> "Vaswani et al. <span style="color:#fbbf24">[1706.03762v7, p.4]</span> employs multi-head attention with d_k=d_v=64 across h=8 heads (d_model=512), while Moshi <span style="color:#fbbf24">[2410.00037v1, p.3]</span> quantizes 24kHz audio into 12.5Hz RVQ frames with 8 hierarchical codebooks..."', delay: 2500 },
+      { text: '<span class="tstamp">[00:00.512]</span> <span class="step">Step 4 (Verifier Loop)</span>: Inline citations [1706.03762v7, 2410.00037v1] and numeric grounding verified (0.8ms) → <strong>Status: 200 OK</strong>', delay: 3000, status: "VERIFIED" },
+      { text: '<hr style="border:none; border-top:1px dashed #334155; margin:14px 0;">', delay: 3500 },
+      { text: '<span style="color:#22d3ee">%</span> <span style="color:#fbbf24">[HIGH BURST LOAD INJECTION: 120 QPM DETECTED]</span>', delay: 3800 },
+      { text: '<span class="tstamp">[00:14.210]</span> <span style="color:#f87171">[WARN 429]</span> Upstream rate_limit_exceeded (TPM left: 3,920 &lt; 4,200 threshold | retry-after: 1.8s)', delay: 4200, tpm: 3920, status: "429 BACKOFF" },
+      { text: '<span class="tstamp">[00:14.225]</span> <span class="step">Admission Controller</span>: Bounded jitter backoff enforced (min(0.35, 1.8) + 84ms jitter = 214ms sleep)', delay: 4600 },
+      { text: '<div class="badge downshift">⚡ Dynamic Downshift Triggered: balanced_512_k5 → small_256_k3 (-81.9% tokens: 1,450 → 262 prompt tokens)</div>', delay: 5000, status: "DOWNSHIFTED" },
+      { text: '<span class="tstamp">[00:14.430]</span> <strong>[RETRY #1 SUCCESS]</strong> Admission admitted with 262 tokens → Stream completed successfully (100.0% completion sustained)', delay: 5500, tpm: 4680, status: "RECOVERED" },
+      { text: '<hr style="border:none; border-top:1px dashed #334155; margin:14px 0;">', delay: 6000 },
+      { text: '<span style="color:#22d3ee">%</span> <span style="color:#f87171">[SIMULATION: 15:00:00 UTC DAILY QUOTA EXHAUSTION]</span> (Remaining RPD: 0 | TPD: 142)', delay: 6400, rpm: 0, status: "EXHAUSTED" },
+      { text: '<span class="tstamp">[00:18.004]</span> <span style="color:#38bdf8">[CIRCUIT BREAKER]</span> Step 3 LLM synthesis bypassed. Emitting zero-token Extractive Citation Card in 12.4ms:', delay: 6800 },
+      { text: '<div class="citation-card"><div class="citation-title">[STATUS: RATE_LIMITED - DAILY SYNTHESIS BUDGET EXHAUSTED]</div>"Daily model synthesis budget reached; returning top verified verbatim passage from [1706.03762v7, p.4] (Section: 3.2.1 Scaled Dot-Product Attention):<br><em>\'Scaled Dot-Product Attention: We compute the attention function on a set of queries simultaneously, packed together into a matrix Q. The dot products of the query with all keys are computed...\'</em>"<br><span style="font-size:11px; color:#7dd3fc; margin-top:4px; display:inline-block;">Full model synthesis resumes automatically at UTC midnight reset.</span></div>', delay: 7200, status: "EXTRACTIVE CARD" },
+      { text: '<span class="prompt">devtyagi@the-relay</span> in <span class="path">~/the-relay</span> on <span class="branch">git:main</span><br><span style="color:#22d3ee">%</span> <span class="cursor"></span>', delay: 7600, status: "COMPLETED" },
+    ];
+
+    let speed = 1.0;
+    let timeouts = [];
+
+    function runSimulation() {
+      timeouts.forEach(clearTimeout);
+      timeouts = [];
+      const body = document.getElementById("termBody");
+      body.innerHTML = "";
+
+      events.forEach((ev) => {
+        const t = setTimeout(() => {
+          const div = document.createElement("div");
+          div.className = "line";
+          div.innerHTML = ev.text;
+          body.appendChild(div);
+          setTimeout(() => div.classList.add("visible"), 20);
+
+          if (ev.tpm !== undefined) document.getElementById("metricTPM").innerText = ev.tpm.toLocaleString();
+          if (ev.rpm !== undefined) document.getElementById("metricRPM").innerText = ev.rpm;
+          if (ev.ttft !== undefined) document.getElementById("metricTTFT").innerText = ev.ttft;
+          if (ev.status !== undefined) document.getElementById("metricStatus").innerText = ev.status;
+
+          body.scrollTop = body.scrollHeight;
+        }, ev.delay / speed);
+        timeouts.push(t);
+      });
+    }
+
+    document.getElementById("btnRestart").addEventListener("click", runSimulation);
+    document.getElementById("btnSpeed").addEventListener("click", () => {
+      speed = speed === 1.0 ? 2.0 : 1.0;
+      document.getElementById("btnSpeed").innerText = `Speed: ${speed}x`;
+      runSimulation();
+    });
+
+    runSimulation();
+  </script>
+</body>
+</html>
